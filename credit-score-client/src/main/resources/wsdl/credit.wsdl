@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://service.creditscoreservice.project.aznu.pl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="CreditScoreServiceImplService" targetNamespace="http://service.creditscoreservice.project.aznu.pl/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://service.creditscoreservice.project.aznu.pl/" elementFormDefault="unqualified" targetNamespace="http://service.creditscoreservice.project.aznu.pl/" version="1.0">
+
+  <xs:element name="checkCreditScore" type="tns:checkCreditScore"/>
+
+  <xs:element name="checkCreditScoreResponse" type="tns:checkCreditScoreResponse"/>
+
+  <xs:complexType name="checkCreditScore">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:creditScoreRequest"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="creditScoreRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="childrenNumber" type="xs:int"/>
+      <xs:element minOccurs="0" name="monthlyExpenses" type="xs:double"/>
+      <xs:element minOccurs="0" name="monthlyIncome" type="xs:double"/>
+      <xs:element minOccurs="0" name="pastCreditsNumber" type="xs:int"/>
+      <xs:element minOccurs="0" name="pesel" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="checkCreditScoreResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:creditScoreResponse"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="creditScoreResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="score" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="checkCreditScore">
+    <wsdl:part element="tns:checkCreditScore" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="checkCreditScoreResponse">
+    <wsdl:part element="tns:checkCreditScoreResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="CreditScoreService">
+    <wsdl:operation name="checkCreditScore">
+      <wsdl:input message="tns:checkCreditScore" name="checkCreditScore">
+    </wsdl:input>
+      <wsdl:output message="tns:checkCreditScoreResponse" name="checkCreditScoreResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CreditScoreServiceImplServiceSoapBinding" type="tns:CreditScoreService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="checkCreditScore">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="checkCreditScore">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="checkCreditScoreResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CreditScoreServiceImplService">
+    <wsdl:port binding="tns:CreditScoreServiceImplServiceSoapBinding" name="CreditScoreServiceImplPort">
+      <soap:address location="http://localhost:8082/services/soap"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,15 +1,44 @@
 version: '3.8'
+name: 'aznu-project'
 
 services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - app-network
+
   credit-score-service:
     build:
       context: ./credit-score-service
       dockerfile: Dockerfile
-    container_name: app-credit-score
+    container_name: app-credit-score-service
     ports:
       - "8082:8080"
     networks:
       - app-network
+
   credit-score-client:
     build:
       context: ./credit-score-client
@@ -19,10 +48,27 @@ services:
       - "8080:8080"
     depends_on:
       - credit-score-service
+      - kafka
     environment:
-      - SOAP_SERVICE_URL=http://app-credit-score:8080/services/soap
+      - SOAP_SERVICE_URL=http://app-credit-score-service:8080/services/soap
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     networks:
       - app-network
+
+  loan-service:
+    build:
+      context: ./loan-service
+      dockerfile: Dockerfile
+    container_name: app-loan-rest-service
+    ports:
+      - "8083:8080"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

@@ -14,6 +14,7 @@ public class CreditScoreController {
     @Autowired
     private CreditScoreService soapClient;
 
+    // endpoint for debugging purpose
     @GetMapping("/getCreditScore")
     public ResponseEntity<?> getCreditScore(
             @RequestParam("pesel") String pesel,
